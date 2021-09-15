@@ -1,18 +1,20 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Button, ButtonGroup, Card, Image } from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activity';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { useStore } from '../../../app/stores/store';
 
-interface ActivityDetailsProps {
-  activity: Activity;
-  cancelSelectActivity: () => void;
-  openForm: (id: string) => void;
-}
+interface ActivityDetailsProps {}
 
-const ActivityDetails: FC<ActivityDetailsProps> = ({
-  activity,
-  cancelSelectActivity,
-  openForm,
-}) => {
+const ActivityDetails: FC<ActivityDetailsProps> = () => {
+  const { activityStore } = useStore();
+  const {
+    selectedActivity: activity,
+    openForm,
+    cancelSelectActivity,
+  } = activityStore;
+
+  if (!activity) return <LoadingComponent content="Loading..." />;
+
   return (
     <Card fluid>
       <Image

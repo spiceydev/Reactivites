@@ -1,21 +1,13 @@
-import React, { FC, SyntheticEvent, useState } from 'react';
+import { FC, useState } from 'react';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activity';
+import { useStore } from '../../../app/stores/store';
 
-interface ActivityListProps {
-  activities: Activity[];
-  selectActivity: (id: string) => void;
-  deleteActivity: (id: string) => void;
-  submitting: boolean;
-}
+interface ActivityListProps {}
 
-const ActivityList: FC<ActivityListProps> = ({
-  activities,
-  selectActivity,
-  deleteActivity,
-  submitting,
-}) => {
+const ActivityList: FC<ActivityListProps> = () => {
   const [target, setTarget] = useState('');
+  const { activityStore } = useStore();
+  const { deleteActivity, activitiesByDate, loading } = activityStore;
 
   const handleActivityDelete = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -28,7 +20,7 @@ const ActivityList: FC<ActivityListProps> = ({
   return (
     <Segment>
       <Item.Group divided>
-        {activities.map((activity) => (
+        {activitiesByDate.map((activity) => (
           <Item key={activity.id}>
             <Item.Content>
               <Item.Header as="a">{activity.title}</Item.Header>
@@ -44,7 +36,7 @@ const ActivityList: FC<ActivityListProps> = ({
                   floated="right"
                   content="View"
                   color="blue"
-                  onClick={() => selectActivity(activity.id)}
+                  onClick={() => activityStore.selectActivity(activity.id)}
                 />
                 <Button
                   name={activity.id}
@@ -52,7 +44,7 @@ const ActivityList: FC<ActivityListProps> = ({
                   content="Delete"
                   color="red"
                   onClick={(e) => handleActivityDelete(e, activity.id)}
-                  loading={submitting && target === activity.id}
+                  loading={loading && target === activity.id}
                 />
                 <Label basic content={activity.category} />
               </Item.Extra>
